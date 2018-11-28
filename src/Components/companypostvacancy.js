@@ -8,58 +8,66 @@ class Create extends Component {
   constructor() {
     super();
     this.state = {
-      name: "",
-      id: "",
-      email: "",
-      address: "",
-      phone: ""
+      vacancy: "",
+      companyname: "",
+      companyemail: "",
+      companyno: "",
+      qualification: "",
+      salary: ""
     };
   }
   componentWillMount() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
-      this.props.history.push("/login");
+      alert("if you are company so login first");
+      this.props.history.push("/");
     }
   }
-  usernamee(e) {
-    this.setState({ name: e.target.value });
+  vacancy(e) {
+    this.setState({ vacancy: e.target.value });
   }
-  idd(e) {
-    this.setState({ id: e.target.value });
-  }
-
-  emaill(e) {
-    this.setState({ email: e.target.value });
-  }
-  addresss(e) {
-    this.setState({ address: e.target.value });
+  companyname(e) {
+    this.setState({ companyname: e.target.value });
   }
 
-  phoneno(e) {
-    this.setState({ phone: e.target.value });
+  email(e) {
+    this.setState({ companyemail: e.target.value });
+  }
+  number(e) {
+    this.setState({ companyno: e.target.value });
+  }
+
+  qualification(e) {
+    this.setState({ qualification: e.target.value });
+  }
+  salary(e) {
+    this.setState({ salary: e.target.value });
   }
 
   createuser() {
-    var userdata = {
-      name: this.state.name,
-      id: this.state.id,
-      email: this.state.email,
-
-      address: this.state.address,
-      phone: this.state.phone
-    };
     var user = JSON.parse(localStorage.getItem("user"));
     var uid = user && user.uid;
 
+    var companyvacancy = {
+      vacancy: this.state.vacancy,
+      companyname: this.state.companyname,
+      companyemail: this.state.companyemail,
+
+      companyno: this.state.companyno,
+      qualification: this.state.qualification,
+      salary: this.state.salary,
+      companyUid: uid
+    };
+    //console.log(companyvacancy);
     firebase
       .database()
-      .ref(`student_detail/${uid}`)
-      .push(userdata)
+      .ref(`companyvacancyy`)
+      .push(companyvacancy)
       .then(response => {
         //     //console.log("successfully create");
         //     // window.location = "/find";
         //     //return <Redirect to="/find" />;
-        this.props.history.push("/find");
+        this.props.history.push("/mypostedvacancies");
       })
       .catch(error => {
         console.log(error.message);
@@ -87,11 +95,11 @@ class Create extends Component {
               <i className="glyphicon glyphicon-user" />
             </span>
             <input
-              onChange={this.usernamee.bind(this)}
+              onChange={this.vacancy.bind(this)}
               type="text"
               style={styles}
               className="form-control"
-              placeholder="Student Name"
+              placeholder="vacancy"
               required
             />
           </div>
@@ -100,11 +108,11 @@ class Create extends Component {
               <i className="glyphicon glyphicon-user" />
             </span>
             <input
-              onChange={this.idd.bind(this)}
+              onChange={this.companyname.bind(this)}
               type="text"
               style={styles}
               className="form-control"
-              placeholder="Student Id"
+              placeholder="companyname"
               required
             />
           </div>
@@ -113,11 +121,11 @@ class Create extends Component {
               <i className="glyphicon glyphicon-user" />
             </span>
             <input
-              onChange={this.emaill.bind(this)}
-              type="text"
+              onChange={this.email.bind(this)}
+              type="email"
               style={styles}
               className="form-control"
-              placeholder="Email"
+              placeholder="Company Email"
               required
             />
           </div>
@@ -127,11 +135,11 @@ class Create extends Component {
               <i className="glyphicon glyphicon-user" />
             </span>
             <input
-              onChange={this.addresss.bind(this)}
+              onChange={this.number.bind(this)}
               type="text"
               style={styles}
               className="form-control"
-              placeholder="Address"
+              placeholder="company Number"
               required
             />
           </div>
@@ -141,11 +149,19 @@ class Create extends Component {
               <i className="glyphicon glyphicon-lock" />
             </span>
             <input
-              onChange={this.phoneno.bind(this)}
+              onChange={this.qualification.bind(this)}
               type="text"
               style={styles}
               className="form-control"
-              placeholder="Phone Number"
+              placeholder="Qualification"
+              required
+            />
+            <input
+              onChange={this.salary.bind(this)}
+              type="text"
+              style={styles}
+              className="form-control"
+              placeholder="salary"
               required
             />
           </div>

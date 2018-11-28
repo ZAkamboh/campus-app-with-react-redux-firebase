@@ -8,7 +8,10 @@ export default class Logout extends React.Component {
       .signOut()
       .then(() => {
         localStorage.removeItem("user");
-        this.props.history.push("/login");
+        localStorage.removeItem("companyprofile");
+        localStorage.removeItem("studentlogin");
+        localStorage.removeItem("studentprofile");
+        this.props.history.push("/");
       });
   }
   render() {

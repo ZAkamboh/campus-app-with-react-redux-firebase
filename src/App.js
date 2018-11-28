@@ -5,9 +5,16 @@ import createBrowserHistory from "history/createBrowserHistory";
 import { Router, Link, Route } from "react-router-dom";
 import Signup from "./Components/signup";
 import Login from "./Components/login";
-import Myapp from "./Components/myapp";
-import Create from "./Components/createrecord";
-import Find from "./Components/finddata";
+//company work
+import Create from "./Components/companypostvacancy";
+import Find from "./Components/companypostedvacancy";
+import Companyprofile from "./Components/companyprofile";
+import Appliedstudents from "./Components/appliedstudents";
+// student work
+import Studentlogin from "./Components/studentlogin";
+import Studentsignup from "./Components/studentsignup";
+import Vacancies from "./Components/vacancies";
+import Studentprofile from "./Components/studentprofile";
 import Home from "./Components/home";
 import Edit from "./Components/edit";
 import firebase from "firebase";
@@ -27,32 +34,51 @@ class App extends Component {
       fontSize: "20px",
       fontFamily: "algerian"
     };
+    var student = {
+      color: "white",
+      fontSize: "20px",
+      fontFamily: "algerian",
+      marginLeft: "100px"
+    };
+    var s = {
+      color: "white",
+      fontSize: "20px",
+      fontFamily: "algerian"
+    };
     return (
       <Router history={customHistory}>
         <div>
           <nav className="navbar navbar-inverse bg-primary">
             <div className="navbar nabar-right">
-              <Link
-                className="navbar navbar-content"
-                style={styling}
-                to="/create"
-              >
-                Create
+              <Link className="navbar navbar-content" style={styling} to="/">
+                Home
               </Link>
               <Link
                 className="navbar navbar-content"
                 style={styling}
-                to="/find"
+                to="/companyprofile"
               >
-                Find
+                Company profile
               </Link>
               <Link
                 className="navbar navbar-content"
                 style={styling}
-                to="/myapp"
+                to="/postvacancy"
               >
-                Myapp
+                Post Vacancy
               </Link>
+              <Link
+                className="navbar navbar-content"
+                style={styling}
+                to="/mypostedvacancies"
+              >
+                My posted vacancies
+              </Link>
+              <Link
+                className="navbar navbar-content"
+                style={styling}
+                to="/appliedstudents"
+              />
               <Link
                 className="navbar navbar-content"
                 style={styling}
@@ -60,14 +86,30 @@ class App extends Component {
               >
                 Logout
               </Link>
+
+              <Link
+                className="navbar navbar-content"
+                style={student}
+                to="/studentprofile"
+              >
+                Student profile
+              </Link>
+              <Link className="navbar navbar-content" style={s} to="/vacancies">
+                Vacancies
+              </Link>
             </div>
           </nav>
           <Route exact path="/" component={Home} />
           <Route path="/signup" component={Signup} />
           <Route path="/login" component={Login} />
-          <Route path="/myapp" component={Myapp} />
-          <Route path="/create" component={Create} />
-          <Route path="/find" component={Find} />
+          <Route path="/studentsignup" component={Studentsignup} />
+          <Route path="/studentlogin" component={Studentlogin} />
+          <Route path="/postvacancy" component={Create} />
+          <Route path="/mypostedvacancies" component={Find} />
+          <Route path="/companyprofile" component={Companyprofile} />
+          <Route path="/appliedstudents" component={Appliedstudents} />
+          <Route path="/studentprofile" component={Studentprofile} />
+          <Route path="/vacancies" component={Vacancies} />
           <Route path="/edit" component={Edit} />
           <Route path="/logout" component={Logout} />
         </div>

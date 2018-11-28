@@ -12,8 +12,8 @@ class Find extends Component {
   componentWillMount() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
-      alert("Please Login First");
-      this.props.history.push("/login");
+      alert("if you are company so login first");
+      this.props.history.push("/");
     }
   }
   delete(key) {
@@ -22,19 +22,21 @@ class Find extends Component {
     const uid = user && user.uid;
     firebase
       .database()
-      .ref(`student_detail/${uid}/${key}`)
+      .ref(`companyvacancyy/${key}`)
       .remove()
       .then(() => {
         firebase
           .database()
-          .ref(`student_detail/${uid}`)
+          .ref(`companyvacancyy`)
           .on("value", snap => {
             var data = snap.val();
             // var keys = Object.keys(data);
             for (let keys in data) {
-              again.push({ ...data[keys], key: keys });
+              if (data[keys]["companyUid"] === uid) {
+                again.push({ ...data[keys], key: keys });
+              }
             }
-            console.log(again);
+            // console.log(again);
             this.setState({ data: again, fetched: true });
           });
       });
@@ -46,12 +48,14 @@ class Find extends Component {
     console.log(uid);
     firebase
       .database()
-      .ref(`student_detail/${uid}`)
-      .once("value", snap => {
+      .ref(`companyvacancyy`)
+      .on("value", snap => {
         var data = snap.val();
         // var keys = Object.keys(data);
         for (let keys in data) {
-          values.push({ ...data[keys], key: keys });
+          if (data[keys]["companyUid"] === uid) {
+            values.push({ ...data[keys], key: keys });
+          }
         }
         console.log(values);
         this.setState({ data: values, fetched: true });
@@ -63,21 +67,23 @@ class Find extends Component {
         <center>
           <table className="table table-bordered table-hover table-striped">
             <tr>
-              <td>User Name</td>
-              <td>Address</td>
+              <td>vacancy</td>
+              <td>company name</td>
               <td>Email</td>
-              <td>Phone </td>
-              <td>I.D</td>
+              <td>company number </td>
+              <td>qualification</td>
+              <td>salary</td>
             </tr>
             {this.state.fetched === true ? (
               this.state.data.map(data => {
                 return (
                   <tr key={data}>
-                    <td>{data.name}</td>
-                    <td>{data.address}</td>
-                    <td>{data.email}</td>
-                    <td>{data.phone}</td>
-                    <td>{data.id}</td>
+                    <td>{data.vacancy}</td>
+                    <td>{data.companyname}</td>
+                    <td>{data.companyemail}</td>
+                    <td>{data.companyno}</td>
+                    <td>{data.qualification}</td>
+                    <td>{data.salary}</td>
                     <td>
                       <button
                         className="btn btn-success"
@@ -86,6 +92,18 @@ class Find extends Component {
                         }
                       >
                         Edit
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() =>
+                          this.props.history.push("/appliedstudents", {
+                            data: data.key
+                          })
+                        }
+                      >
+                        View Applied Students
                       </button>
                     </td>
                     <td>

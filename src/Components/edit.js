@@ -5,11 +5,12 @@ export default class Edit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      id: "",
-      email: "",
-      address: "",
-      phone: "",
+      vacancy: "",
+      companyname: "",
+      companyemail: "",
+      companyno: "",
+      qualification: "",
+      salary: "",
       key: "",
       loader: false
     };
@@ -17,31 +18,34 @@ export default class Edit extends React.Component {
   componentWillMount() {
     const values = this.props.location.state.data;
     this.setState({
-      name: values.name,
-      id: values.id,
-      phone: values.phone,
-      address: values.address,
-      email: values.email,
+      vacancy: values.vacancy,
+      companyname: values.companyname,
+      companyemail: values.companyemail,
+      companyno: values.companyno,
+      qualification: values.qualification,
+      salary: values.salary,
       key: values.key
     });
   }
   updateRecords() {
-    this.setState({ loader: true });
-    var data = {
-      name: this.state.name,
-      id: this.state.id,
-      phone: this.state.phone,
-      address: this.state.address,
-      email: this.state.email
-    };
     const user = JSON.parse(localStorage.getItem("user"));
     const uid = user && user.uid;
+    this.setState({ loader: true });
+    var data = {
+      vacancy: this.state.vacancy,
+      companyname: this.state.companyname,
+      companyemail: this.state.companyemail,
+      companyUid: uid,
+      companyno: this.state.companyno,
+      qualification: this.state.qualification,
+      salary: this.state.salary
+    };
     firebase
       .database()
-      .ref(`student_detail/${uid}/${this.state.key}`)
+      .ref(`companyvacancyy/${this.state.key}`)
       .set(data)
       .then(() => {
-        this.props.history.push("/find");
+        this.props.history.push("/mypostedvacancies");
       });
   }
   render() {
@@ -64,12 +68,12 @@ export default class Edit extends React.Component {
             <i className="glyphicon glyphicon-user" />
           </span>
           <input
-            onChange={e => this.setState({ name: e.target.value })}
+            onChange={e => this.setState({ vacancy: e.target.value })}
             type="text"
             style={styles}
             className="form-control"
-            placeholder="Student Name"
-            value={this.state.name}
+            placeholder="vacancy"
+            value={this.state.vacancy}
             required
           />
         </div>
@@ -78,12 +82,12 @@ export default class Edit extends React.Component {
             <i className="glyphicon glyphicon-user" />
           </span>
           <input
-            onChange={e => this.setState({ id: e.target.value })}
+            onChange={e => this.setState({ companyname: e.target.value })}
             type="text"
             style={styles}
             className="form-control"
-            placeholder="Student Id"
-            value={this.state.id}
+            placeholder="company name"
+            value={this.state.companyname}
             required
           />
         </div>
@@ -92,12 +96,12 @@ export default class Edit extends React.Component {
             <i className="glyphicon glyphicon-user" />
           </span>
           <input
-            onChange={e => this.setState({ email: e.target.value })}
+            onChange={e => this.setState({ companyemail: e.target.value })}
             type="text"
             style={styles}
             className="form-control"
-            placeholder="Email"
-            value={this.state.email}
+            placeholder=" company Email"
+            value={this.state.companyemail}
             required
           />
         </div>
@@ -107,12 +111,12 @@ export default class Edit extends React.Component {
             <i className="glyphicon glyphicon-user" />
           </span>
           <input
-            onChange={e => this.setState({ address: e.target.value })}
+            onChange={e => this.setState({ companyno: e.target.value })}
             type="text"
             style={styles}
             className="form-control"
-            placeholder="Address"
-            value={this.state.address}
+            placeholder="number"
+            value={this.state.companyno}
             required
           />
         </div>
@@ -122,12 +126,21 @@ export default class Edit extends React.Component {
             <i className="glyphicon glyphicon-lock" />
           </span>
           <input
-            onChange={e => this.setState({ phone: e.target.value })}
+            onChange={e => this.setState({ qualification: e.target.value })}
             type="text"
             style={styles}
             className="form-control"
-            placeholder="Phone Number"
-            value={this.state.phone}
+            placeholder="qualification"
+            value={this.state.qualification}
+            required
+          />
+          <input
+            onChange={e => this.setState({ salary: e.target.value })}
+            type="text"
+            style={styles}
+            className="form-control"
+            placeholder="salary"
+            value={this.state.salary}
             required
           />
         </div>

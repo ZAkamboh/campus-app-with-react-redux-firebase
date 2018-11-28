@@ -5,7 +5,8 @@ class Login extends Component {
     super();
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      type: ""
     };
   }
   emaill(e) {
@@ -20,14 +21,31 @@ class Login extends Component {
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(res => {
-        // firebase
-        //   .database()
-        //   .ref(`Students/${res.uid}`)
-        //   .on("value", snap => {
-        //     localStorage.setItem("userdetails", JSON.stringify(snap.val()));
-        //   });
-        localStorage.setItem("user", JSON.stringify(res));
-        this.props.history.push("/");
+        if (this.state.type === "student") {
+          firebase
+            .database()
+            .ref(`studentprofile/${res.uid}`)
+            .on("value", snap => {
+              localStorage.setItem(
+                "studentprofile",
+                JSON.stringify(snap.val())
+              );
+              //console.log(JSON.parse(localStorage.getItem("studentprofile")));
+              this.props.history.push("/studentprofile");
+            });
+        } else {
+          firebase
+            .database()
+            .ref(`companyprofile/${res.uid}`)
+            .on("value", snap => {
+              localStorage.setItem(
+                "companyprofile",
+                JSON.stringify(snap.val())
+              );
+            });
+          localStorage.setItem("user", JSON.stringify(res));
+          this.props.history.push("/companyprofile");
+        }
       })
       .catch(error => {
         alert(error.message);
@@ -44,6 +62,15 @@ class Login extends Component {
           <h4 style={styling}>Please Verify Yourself</h4>
           <div>
             <div id="error" style={styling} />
+            <select
+              onChange={event => this.setState({ type: event.target.value })}
+              className="form-control"
+              style={{ width: "400px" }}
+            >
+              <option>Select Login Type</option>
+              <option value="student">Student</option>
+              <option value="company">Company</option>
+            </select>
             <input
               type="text"
               style={{ width: "400px", marginTop: "30px" }}
@@ -51,6 +78,11 @@ class Login extends Component {
               className="form-control"
               placeholder="Email"
               required
+              disabled={
+                this.state.type === "student" || this.state.type === "company"
+                  ? false
+                  : true
+              }
             />
             <br />
             <input
@@ -60,6 +92,11 @@ class Login extends Component {
               className="form-control"
               placeholder="Password"
               required
+              disabled={
+                this.state.type === "student" || this.state.type === "company"
+                  ? false
+                  : true
+              }
             />
             <br />
             <button
@@ -67,6 +104,11 @@ class Login extends Component {
               id="login"
               onClick={this.userlogin.bind(this)}
               style={styling}
+              disabled={
+                this.state.type === "student" || this.state.type === "company"
+                  ? false
+                  : true
+              }
             >
               Login
             </button>

@@ -37,7 +37,10 @@ class Signup extends Component {
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(response => {
-          //firebase.database.ref(`Students/${response.uid}`).set(userdetails);
+          firebase
+            .database()
+            .ref(`companyprofile/${response.uid}`)
+            .set(userdetails);
           this.props.history.push("/login");
         })
         .catch(error => {
@@ -60,14 +63,23 @@ class Signup extends Component {
             style={{ marginTop: "30px", width: "400px" }}
             className="form-control"
             onChange={this.usernamee.bind(this)}
-            placeholder="Username"
+            placeholder="company name"
           />
           <input
             type="email"
             style={{ marginTop: "30px", width: "400px" }}
             className="form-control"
             onChange={this.emaill.bind(this)}
-            placeholder="Email"
+            placeholder=" company Email"
+          />
+          <input
+            type="text"
+            style={{ marginTop: "30px", width: "400px" }}
+            className="form-control"
+            onChange={event => {
+              this.setState({ contactNumber: event.target.value });
+            }}
+            placeholder="Contact Number"
           />
           <input
             type="password"
@@ -83,15 +95,7 @@ class Signup extends Component {
             onChange={this.cpasswordd.bind(this)}
             placeholder="ConfirmPassword"
           />
-          <input
-            type="text"
-            style={{ marginTop: "30px", width: "400px" }}
-            className="form-control"
-            onChange={event => {
-              this.setState({ contactNumber: event.target.value });
-            }}
-            placeholder="Contact Number"
-          />
+
           <button
             style={{ marginTop: "30px" }}
             className="btn btn-success"

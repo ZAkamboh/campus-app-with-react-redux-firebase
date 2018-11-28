@@ -35,29 +35,17 @@ class Home extends Component {
           <br />
 
           <button className="btn btn-danger">
-            {" "}
             <Link style={sty} to="/login">
-              Company login{" "}
-            </Link>{" "}
-          </button>
-
-          <br />
-          <br />
-          <br />
-          <button className="btn btn-info">
-            {" "}
-            <Link style={sty} to="/login">
-              Student login{" "}
-            </Link>{" "}
+              Login
+            </Link>
           </button>
           <br />
           <br />
           <br />
           <button className="btn btn-success">
-            {" "}
-            <Link style={sty} to="/login">
-              Admin login{" "}
-            </Link>{" "}
+            <Link style={sty} to="/studentsignup">
+              Signup
+            </Link>
           </button>
         </center>
       </div>
