@@ -1,24 +1,32 @@
 import React, { Component } from "react";
 import firebase from "../firebase/firebase";
+import { connect } from "react-redux";
 import "./style.css";
+import { AppAction } from "../store/action";
 class Find extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      fetched: false
+      fetched: false,
+      vacancies: []
     };
   }
   componentWillMount() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("companyprofile"));
     if (!user) {
       alert("if you are company so login first");
       this.props.history.push("/");
     }
   }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.vacancies.length > 0) {
+      this.setState({ vacancies: nextProps.vacancies, fetched: true });
+    }
+  }
   delete(key) {
     const again = [];
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("profile"));
     const uid = user && user.uid;
     firebase
       .database()
@@ -42,24 +50,7 @@ class Find extends Component {
       });
   }
   componentDidMount() {
-    var values = [];
-    var user = JSON.parse(localStorage.getItem("user"));
-    var uid = user && user.uid;
-    console.log(uid);
-    firebase
-      .database()
-      .ref(`companyvacancyy`)
-      .on("value", snap => {
-        var data = snap.val();
-        // var keys = Object.keys(data);
-        for (let keys in data) {
-          if (data[keys]["companyUid"] === uid) {
-            values.push({ ...data[keys], key: keys });
-          }
-        }
-        console.log(values);
-        this.setState({ data: values, fetched: true });
-      });
+    this.props.getVacancies();
   }
   render() {
     return (
@@ -75,7 +66,7 @@ class Find extends Component {
               <td>salary</td>
             </tr>
             {this.state.fetched === true ? (
-              this.state.data.map(data => {
+              this.state.vacancies.map(data => {
                 return (
                   <tr key={data}>
                     <td>{data.vacancy}</td>
@@ -128,5 +119,20 @@ class Find extends Component {
     );
   }
 }
+function mapState(state) {
+  return {
+    vacancies: state.AppReducer.vacancies
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    getVacancies: () => {
+      dispatch(AppAction.getVacancies());
+    }
+  };
+}
 
-export default Find;
+export default connect(
+  mapState,
+  mapDispatch
+)(Find);

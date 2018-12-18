@@ -3,6 +3,8 @@ import Mopt from "./moption.js";
 import { Link } from "react-router-dom";
 import firebase from "../firebase/firebase";
 import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
 
 class Create extends Component {
   constructor() {
@@ -17,7 +19,8 @@ class Create extends Component {
     };
   }
   componentWillMount() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    this.props.clear();
+    const user = JSON.parse(localStorage.getItem("companyprofile"));
     if (!user) {
       alert("if you are company so login first");
       this.props.history.push("/");
@@ -45,8 +48,9 @@ class Create extends Component {
   }
 
   createuser() {
-    var user = JSON.parse(localStorage.getItem("user"));
+    var user = JSON.parse(localStorage.getItem("profile"));
     var uid = user && user.uid;
+    alert(uid);
 
     var companyvacancy = {
       vacancy: this.state.vacancy,
@@ -58,20 +62,7 @@ class Create extends Component {
       salary: this.state.salary,
       companyUid: uid
     };
-    //console.log(companyvacancy);
-    firebase
-      .database()
-      .ref(`companyvacancyy`)
-      .push(companyvacancy)
-      .then(response => {
-        //     //console.log("successfully create");
-        //     // window.location = "/find";
-        //     //return <Redirect to="/find" />;
-        this.props.history.push("/mypostedvacancies");
-      })
-      .catch(error => {
-        console.log(error.message);
-      });
+    this.props.createVacancy(companyvacancy);
   }
 
   render() {
@@ -174,12 +165,35 @@ class Create extends Component {
           >
             Submit Details
           </button>
-
-          <div id="pleasewait" style={{ marginTop: "30px" }} />
         </center>
+        {this.props.createdSuccess &&
+          this.props.history.push("/mypostedvacancies")}
       </div>
     );
   }
 }
+function mapState(state) {
+  console.log(state.AppReducer);
+  return {
+    name: state.AppReducer.name,
+    createdSuccess: state.AppReducer.createdSuccess
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    butt: payload => {
+      dispatch(AppAction.button(payload));
+    },
+    createVacancy: payload => {
+      dispatch(AppAction.createVacancy(payload));
+    },
+    clear: () => {
+      dispatch(AppAction.clear());
+    }
+  };
+}
 
-export default Create;
+export default connect(
+  mapState,
+  mapDispatch
+)(Create);

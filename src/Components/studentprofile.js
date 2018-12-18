@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
 class Studentprofile extends Component {
   constructor() {
     super();
@@ -15,13 +16,18 @@ class Studentprofile extends Component {
       this.props.history.push("/");
     }
   }
-
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.studentpro) {
+      this.setState({ data: nextProps.studentpro }, () => {});
+    }
+  }
   componentDidMount() {
-    const stdpro = JSON.parse(localStorage.getItem("studentprofile"));
-    //console.log(stdpro);
-    this.setState({ data: stdpro }, () => {
-      console.log(this.state.data);
-    });
+    // const stdpro = JSON.parse(localStorage.getItem("studentprofile"));
+    this.props.studentP();
+    // //console.log(stdpro);
+    // this.setState({ data: stdpro }, () => {
+    //   console.log(this.state.data);
+    // });
   }
   render() {
     return (
@@ -35,6 +41,7 @@ class Studentprofile extends Component {
             <td>GPA</td>
             <td>Skills</td>
           </tr>
+          {console.log(this.state.data)}
           {this.state.data && (
             <tr>
               <td>{this.state.data.collegename}</td>
@@ -45,9 +52,31 @@ class Studentprofile extends Component {
             </tr>
           )}
         </table>
+
+        <h1>{this.props.name} </h1>
+        <button onClick={() => this.props.butt("kamboh")}>
+          click to change{" "}
+        </button>
       </div>
     );
   }
 }
 
-export default Studentprofile;
+function mapState(state) {
+  return {
+    name: state.AppReducer.name,
+    studentpro: state.AppReducer.studentpro
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    studentP: () => {
+      dispatch(AppAction.studentP());
+    }
+  };
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(Studentprofile);

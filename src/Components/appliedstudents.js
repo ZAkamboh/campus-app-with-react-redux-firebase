@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import firebase from "../firebase/firebase";
+
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
 class Appliedstudents extends Component {
   constructor(props) {
     super(props);
@@ -9,44 +12,22 @@ class Appliedstudents extends Component {
     };
   }
   componentWillMount() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("companyprofile"));
     if (!user) {
       alert("if you are company so login first");
       this.props.history.push("/");
     } else {
       var vacancyId = this.props.location.state.data;
-      if (vacancyId) {
-        firebase
-          .database()
-          .ref(`/companyvacancyy/${vacancyId}/appliedStudents`)
-          .on("value", snap => {
-            var value = snap.val();
-            var data = [];
-            for (let keys in value) {
-              data.push(value[keys]);
-            }
-            this.setState({ data, fetched: true });
-          });
-      }
+      this.props.applied(vacancyId);
     }
   }
-
-  componentDidMount() {
-    // var values = [];
-    // const user = JSON.parse(localStorage.getItem("studentprofile"));
-    // var uid = user && user.uid;
-    // //console.log(uid);
-    // firebase
-    //   .database()
-    //   .ref(`studentprofile`)
-    //   .once("value", snap => {
-    //     var data = snap.val();
-    //     for (let keys in data) {
-    //       values.push({ ...data[keys] });
-    //     }
-    //     // console.log(data);
-    //     this.setState({ data: values, fetched: true }, () => {});
-    //   });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.appliedStudents.length > 0) {
+      this.setState(
+        { data: nextProps.appliedStudents, fetched: true },
+        () => {}
+      );
+    }
   }
   render() {
     return (
@@ -86,4 +67,20 @@ class Appliedstudents extends Component {
   }
 }
 
-export default Appliedstudents;
+function mapState(state) {
+  return {
+    appliedStudents: state.AppReducer.applied
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    applied: payload => {
+      dispatch(AppAction.applied(payload));
+    }
+  };
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(Appliedstudents);

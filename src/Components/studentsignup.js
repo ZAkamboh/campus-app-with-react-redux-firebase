@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../firebase/firebase";
+import { AppAction } from "../store/action";
+import { connect } from "react-redux";
 class Studentsignup extends Component {
   constructor(props) {
     super(props);
@@ -18,53 +20,29 @@ class Studentsignup extends Component {
 
   usersignup() {
     if (this.state.type === "student") {
-      if (this.state.password === this.state.cpassword) {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.state.email, this.state.password)
-          .then(response => {
-            const studentdetails = {
-              studentname: this.state.name,
-              studentemail: this.state.email,
-              contactnumber: this.state.contactnumber,
-              collegename: this.state.collegename,
-              gpa: this.state.gpa,
-              skills: this.state.skills,
-              type: this.state.type,
-              uid: response.uid
-            };
-            firebase
-              .database()
-              .ref(`studentprofile/${response.uid}`)
-              .set(studentdetails);
-            this.props.history.push("/login");
-          })
-          .catch(error => {
-            alert(error.message);
-          });
-      }
+      const studentdetails = {
+        studentname: this.state.name,
+        studentemail: this.state.email,
+        contactnumber: this.state.contactnumber,
+        collegename: this.state.collegename,
+        gpa: this.state.gpa,
+        skills: this.state.skills,
+        type: this.state.type,
+        email: this.state.email,
+        password: this.state.password,
+        cpassword: this.state.cpassword
+      };
+      this.props.studentSignup(studentdetails);
     } else {
-      const userdetails = {
+      const companydetails = {
         username: this.state.name,
         email: this.state.email,
         contactNumber: this.state.contactnumber,
-        type: this.state.type
+        type: this.state.type,
+        password: this.state.password,
+        cpassword: this.state.cpassword
       };
-      if (this.state.password === this.state.cpassword) {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.state.email, this.state.password)
-          .then(response => {
-            firebase
-              .database()
-              .ref(`companyprofile/${response.uid}`)
-              .set(userdetails);
-            this.props.history.push("/login");
-          })
-          .catch(error => {
-            alert(error.message);
-          });
-      }
+      this.props.companySignup(companydetails);
     }
   }
   handleChange(event) {
@@ -218,9 +196,32 @@ class Studentsignup extends Component {
           </button>
           <div id="redirect" />
         </center>
+        {this.props.studentsignupP && this.props.history.push("/")}
+        {this.props.companysignupP && this.props.history.push("/")}
       </div>
     );
   }
 }
 
-export default Studentsignup;
+function mapState(state) {
+  return {
+    studentsignupP: state.AppReducer.studentsignupP,
+    companysignupP: state.AppReducer.companysignupP
+  };
+}
+
+function mapDispatch(dispatch) {
+  return {
+    studentSignup: payload => {
+      dispatch(AppAction.studentSignup(payload));
+    },
+    companySignup: payload => {
+      dispatch(AppAction.companySignup(payload));
+    }
+  };
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(Studentsignup);

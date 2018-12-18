@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
 
 class Companyprofile extends Component {
   constructor() {
@@ -9,17 +11,19 @@ class Companyprofile extends Component {
   }
 
   componentWillMount() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("companyprofile"));
     if (!user) {
       alert("if you are company so login first");
       this.props.history.push("/");
+    } else {
+      this.props.companyP();
     }
   }
-  componentDidMount() {
-    const companyprofile = JSON.parse(localStorage.getItem("companyprofile"));
-    this.setState({ profile: companyprofile }, () => {
-      //console.log(this.state.profile);
-    });
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.companypro) {
+      this.setState({ profile: nextProps.companypro }, () => {});
+    }
   }
 
   render() {
@@ -45,4 +49,21 @@ class Companyprofile extends Component {
   }
 }
 
-export default Companyprofile;
+function mapState(state) {
+  console.log("www", state.AppReducer.companypro);
+  return {
+    companypro: state.AppReducer.companypro
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    companyP: () => {
+      dispatch(AppAction.companyP());
+    }
+  };
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(Companyprofile);

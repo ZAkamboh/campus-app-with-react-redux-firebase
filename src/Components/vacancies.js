@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import firebase from "../firebase/firebase";
+
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
 class Vacancies extends Component {
   constructor(props) {
     super(props);
@@ -18,25 +21,32 @@ class Vacancies extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.vacanciesStudent.length > 0) {
+      this.setState({ data: nextProps.vacanciesStudent, fetched: true });
+    }
+  }
+
   componentDidMount() {
-    var values = [];
-    // var u = JSON.parse(localStorage.getItem("studentlogin"));
-    // var uid = u && u.uid;
-    //console.log(uid);
-    firebase
-      .database()
-      .ref(`companyvacancyy`)
-      .once("value", snap => {
-        var data = snap.val();
-        //var keys = Object.keys(data);
-        for (let keys in data) {
-          values.push({ ...data[keys], key: keys });
-        }
-        console.log(values);
-        this.setState({ data: values, fetched: true, press: true }, () => {
-          //console.log(this.state.data);
-        });
-      });
+    // var values = [];
+    // // var u = JSON.parse(localStorage.getItem("studentlogin"));
+    // // var uid = u && u.uid;
+    // //console.log(uid);
+    // firebase
+    //   .database()
+    //   .ref(`companyvacancyy`)
+    //   .once("value", snap => {
+    //     var data = snap.val();
+    //     //var keys = Object.keys(data);
+    //     for (let keys in data) {
+    //       values.push({ ...data[keys], key: keys });
+    //     }
+    //     console.log(values);
+    //     this.setState({ data: values, fetched: true, press: true }, () => {
+    //       //console.log(this.state.data);
+    //     });
+    //   });
+    this.props.vacancies();
   }
   applyJob(key) {
     var user = JSON.parse(localStorage.getItem("studentprofile"));
@@ -89,5 +99,21 @@ class Vacancies extends Component {
     );
   }
 }
+function mapState(state) {
+  return {
+    vacanciesStudent: state.AppReducer.vacanciesStudent
+    // studentpro: state.AppReducer.studentpro
+  };
+}
+function mapDispatch(dispatch) {
+  return {
+    vacancies: () => {
+      dispatch(AppAction.vacancies());
+    }
+  };
+}
 
-export default Vacancies;
+export default connect(
+  mapState,
+  mapDispatch
+)(Vacancies);

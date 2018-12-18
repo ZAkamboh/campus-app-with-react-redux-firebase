@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import firebase from "../firebase/firebase";
+import { connect } from "react-redux";
+import { AppAction } from "../store/action";
+import AppReducer from "../store/reducer/appreducer";
+
 class Login extends Component {
   constructor() {
     super();
@@ -9,6 +13,9 @@ class Login extends Component {
       type: ""
     };
   }
+  componentWillMount() {
+    //this.props.clear();
+  }
   emaill(e) {
     this.setState({ email: e.target.value });
   }
@@ -17,39 +24,13 @@ class Login extends Component {
   }
 
   userlogin() {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(res => {
-        if (this.state.type === "student") {
-          firebase
-            .database()
-            .ref(`studentprofile/${res.uid}`)
-            .on("value", snap => {
-              localStorage.setItem(
-                "studentprofile",
-                JSON.stringify(snap.val())
-              );
-              //console.log(JSON.parse(localStorage.getItem("studentprofile")));
-              this.props.history.push("/studentprofile");
-            });
-        } else {
-          firebase
-            .database()
-            .ref(`companyprofile/${res.uid}`)
-            .on("value", snap => {
-              localStorage.setItem(
-                "companyprofile",
-                JSON.stringify(snap.val())
-              );
-            });
-          localStorage.setItem("user", JSON.stringify(res));
-          this.props.history.push("/companyprofile");
-        }
-      })
-      .catch(error => {
-        alert(error.message);
-      });
+    var logindata = {
+      email: this.state.email,
+      password: this.state.password,
+      type: this.state.type
+    };
+
+    this.props.login(logindata);
   }
   render() {
     var styling = {
@@ -63,7 +44,11 @@ class Login extends Component {
           <div>
             <div id="error" style={styling} />
             <select
-              onChange={event => this.setState({ type: event.target.value })}
+              onChange={event =>
+                this.setState({
+                  type: event.target.value
+                })
+              }
               className="form-control"
               style={{ width: "400px" }}
             >
@@ -115,13 +100,35 @@ class Login extends Component {
             <div id="pleasewait" />
             <p>
               Do Not Have Account?
-              <a href="/signup">Sign Up</a>
+              <a href="/studentsignup">Sign Up</a>
             </p>
           </div>
         </center>
+        {this.props.studentlogin && this.props.history.push("/studentprofile")}
+        {this.props.companylogin && this.props.history.push("/companyprofile")}
       </div>
     );
   }
 }
 
-export default Login;
+function mapState(state) {
+  return {
+    companylogin: state.AppReducer.companylogin,
+    studentlogin: state.AppReducer.studentlogin
+  };
+}
+
+function mapDispatch(dispatch) {
+  return {
+    login: payload => {
+      dispatch(AppAction.login(payload));
+    },
+    clear: () => {
+      dispatch(AppAction.clear());
+    }
+  };
+}
+export default connect(
+  mapState,
+  mapDispatch
+)(Login);
